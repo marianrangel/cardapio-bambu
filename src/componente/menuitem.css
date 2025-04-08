@@ -1,0 +1,36 @@
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .menu-item img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .menu-item h2 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .menu-item p {
+    color: #666;
+    margin: 4px 0;
+  }
+  
+  .menu-item .price {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #28a745;
+    margin-top: 8px;
+  }
+  
