@@ -1,18 +1,27 @@
-import React from 'react';
+import React from "react";
 
-function MenuItem({ item }) {
+const MenuItem = ({ id, name, description, price, image, onAdd }) => {
   return (
     <div className="menu-item">
-      <img
-        src={item.imageUrl}
-        alt={item.name}
-        className="menu-item-imagem"
+      {/* Add loading="lazy" for image optimization */}
+      <img 
+        src={image} 
+        alt={name} 
+        className="menu-item-imagem" 
+        loading="lazy"
       />
-      <h3>{item.name}</h3>
-      <p>{item.description}</p>
-      <span className="menu-item-preco">{item.price}</span>
+      <h3>{name}</h3>
+      <p>{description}</p>
+      <div className="menu-item-preco">{price}</div>
+      <button 
+        onClick={() => onAdd()} 
+        className="menu-item-link"
+        aria-label={`Adicionar ${name} ao carrinho`}
+      >
+        Adicionar ao Carrinho
+      </button>
     </div>
   );
-}
+};
 
 export default MenuItem;
