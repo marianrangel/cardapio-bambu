@@ -31,6 +31,7 @@ const MenuItems = [
     displayPrice: "R$ 34,90",
     imageUrl: "/img/cocada-ao-forno.webp", // Changed to WebP format
   }
+  
 ];
 
 export default MenuItems;
