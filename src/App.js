@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
-import MenuItem from "./componente/MenuItem";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import "./styles.css";
+
+// Lazy load do componente ExtraInfo
+const ExtraInfo = lazy(() => import("./componente/ExtraInfo"));
 
 // Dados do cardápio com categorias
 const menuItems = [
@@ -96,7 +98,6 @@ const menuItems = [
   }
 ];
 
-// Categorias para o menu
 const categorias = [
   { id: "todos", nome: "Todos" },
   { id: "entradas", nome: "Entradas" },
@@ -112,7 +113,6 @@ function App() {
   const [itensFiltrados, setItensFiltrados] = useState(menuItems);
   const [menuMobileAtivo, setMenuMobileAtivo] = useState(false);
 
-  // Filtra os itens por categoria
   useEffect(() => {
     if (categoriaAtiva === "todos") {
       setItensFiltrados(menuItems);
@@ -121,7 +121,6 @@ function App() {
     }
   }, [categoriaAtiva]);
 
-  // Calcula o total do carrinho
   useEffect(() => {
     const novoTotal = carrinho.reduce((soma, item) => soma + item.price, 0);
     setTotal(novoTotal);
@@ -143,10 +142,7 @@ function App() {
   };
 
   const formatarPreco = (valor) => {
-    return valor.toLocaleString('pt-BR', { 
-      style: 'currency', 
-      currency: 'BRL' 
-    });
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
   const toggleMenu = () => {
@@ -160,11 +156,7 @@ function App() {
           <a href="/" className="logo">
             <span className="logo-text">Coco Bambu</span>
           </a>
-          
-          <button className="menu-toggle" onClick={toggleMenu}>
-            ☰
-          </button>
-          
+          <button className="menu-toggle" onClick={toggleMenu}>☰</button>
           <nav className={`main-nav ${menuMobileAtivo ? 'active' : ''}`}>
             <ul>
               <li><a href="#cardapio">Início</a></li>
@@ -172,9 +164,9 @@ function App() {
                 <a href="#categorias">Cardápio</a>
                 <div className="categoria-dropdown-content">
                   {categorias.map(cat => (
-                    <a 
-                      key={cat.id} 
-                      href="#" 
+                    <a
+                      key={cat.id}
+                      href="#"
                       onClick={(e) => {
                         e.preventDefault();
                         setCategoriaAtiva(cat.id);
@@ -191,7 +183,7 @@ function App() {
           </nav>
         </div>
       </header>
-      
+
       <div className="main-content">
         <main className="cardapio-container">
           <h1 className="menu-title">Nosso Cardápio</h1>
@@ -261,16 +253,20 @@ function App() {
               </div>
             )}
           </section>
+
+          {/* Component ExtraInfo carregado sob demanda */}
+          <Suspense fallback={<div>Carregando informações extras...</div>}>
+            <ExtraInfo />
+          </Suspense>
         </main>
       </div>
-      
+
       <footer className="site-footer">
         <div className="footer-container">
           <div className="footer-col footer-about">
             <a href="/" className="footer-logo">Cocobambu</a>
             <p>Especialistas em gastronomia de alta qualidade. Experimente nossos pratos exclusivos feitos com ingredientes selecionados.</p>
           </div>
-          
           <div className="footer-col">
             <h3>Links Rápidos</h3>
             <nav className="footer-nav">
@@ -282,7 +278,6 @@ function App() {
               </ul>
             </nav>
           </div>
-          
           <div className="footer-col">
             <h3>Contato</h3>
             <div className="footer-contato">
@@ -292,7 +287,6 @@ function App() {
             </div>
           </div>
         </div>
-        
         <div className="copyright">
           &copy; {new Date().getFullYear()} Coco Bambu. Todos os direitos reservados.
         </div>
