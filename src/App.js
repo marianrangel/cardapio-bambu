@@ -1,10 +1,12 @@
 import React, { useState, useEffect, lazy, Suspense } from "react";
 import "./styles.css";
 
-// Lazy load do componente ExtraInfo
+// Code Splitting
 const ExtraInfo = lazy(() => import("./componente/ExtraInfo"));
+const Carrinho = lazy(() => import("./componente/carrinho"));
+const Footer = lazy(() => import("./componente/footer"));
 
-// Dados do cardápio com categorias
+// Dados do cardápio
 const menuItems = [
   {
     id: 1,
@@ -114,11 +116,11 @@ function App() {
   const [menuMobileAtivo, setMenuMobileAtivo] = useState(false);
 
   useEffect(() => {
-    if (categoriaAtiva === "todos") {
-      setItensFiltrados(menuItems);
-    } else {
-      setItensFiltrados(menuItems.filter(item => item.categoria === categoriaAtiva));
-    }
+    setItensFiltrados(
+      categoriaAtiva === "todos"
+        ? menuItems
+        : menuItems.filter(item => item.categoria === categoriaAtiva)
+    );
   }, [categoriaAtiva]);
 
   useEffect(() => {
@@ -131,14 +133,12 @@ function App() {
       ...item,
       timestamp: new Date().getTime()
     };
-    setCarrinho((prevCarrinho) => [...prevCarrinho, itemComTimestamp]);
+    setCarrinho((prev) => [...prev, itemComTimestamp]);
     alert(`${item.name} adicionado ao carrinho!`);
   };
 
   const excluirItem = (timestamp) => {
-    setCarrinho((prevCarrinho) =>
-      prevCarrinho.filter((item) => item.timestamp !== timestamp)
-    );
+    setCarrinho((prev) => prev.filter(item => item.timestamp !== timestamp));
   };
 
   const formatarPreco = (valor) => {
@@ -226,71 +226,24 @@ function App() {
             ))}
           </section>
 
-          <section className="carrinho">
-            <h2>Seu Carrinho</h2>
-            {carrinho.length === 0 ? (
-              <p className="carrinho-vazio">O carrinho está vazio.</p>
-            ) : (
-              <div className="carrinho-content">
-                <ul className="carrinho-lista">
-                  {carrinho.map((item) => (
-                    <li key={item.timestamp} className="carrinho-item">
-                      <span className="item-name">{item.name}</span>
-                      <span className="item-price">{item.displayPrice}</span>
-                      <button
-                        onClick={() => excluirItem(item.timestamp)}
-                        className="btn-excluir"
-                      >
-                        Excluir
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-                <div className="total">
-                  <h3>Total: {formatarPreco(total)}</h3>
-                  <button className="btn-finalizar">Finalizar Pedido</button>
-                </div>
-              </div>
-            )}
-          </section>
+          <Suspense fallback={<div>Carregando carrinho...</div>}>
+            <Carrinho
+              carrinho={carrinho}
+              excluirItem={excluirItem}
+              total={total}
+              formatarPreco={formatarPreco}
+            />
+          </Suspense>
 
-          {/* Component ExtraInfo carregado sob demanda */}
           <Suspense fallback={<div>Carregando informações extras...</div>}>
             <ExtraInfo />
           </Suspense>
         </main>
       </div>
 
-      <footer className="site-footer">
-        <div className="footer-container">
-          <div className="footer-col footer-about">
-            <a href="/" className="footer-logo">Cocobambu</a>
-            <p>Especialistas em gastronomia de alta qualidade. Experimente nossos pratos exclusivos feitos com ingredientes selecionados.</p>
-          </div>
-          <div className="footer-col">
-            <h3>Links Rápidos</h3>
-            <nav className="footer-nav">
-              <ul>
-                <li><a href="#cardapio">Cardápio</a></li>
-                <li><a href="#promocoes">Promoções</a></li>
-                <li><a href="#contato">Contato</a></li>
-                <li><a href="#sobre">Sobre Nós</a></li>
-              </ul>
-            </nav>
-          </div>
-          <div className="footer-col">
-            <h3>Contato</h3>
-            <div className="footer-contato">
-              <p><span className="contato-icon">📍</span> Av. Paulista, 1000 - São Paulo</p>
-              <p><span className="contato-icon">📱</span> (11) 99999-9999</p>
-              <p><span className="contato-icon">✉️</span> contato@Cocobambu.com</p>
-            </div>
-          </div>
-        </div>
-        <div className="copyright">
-          &copy; {new Date().getFullYear()} Coco Bambu. Todos os direitos reservados.
-        </div>
-      </footer>
+      <Suspense fallback={<div>Carregando rodapé...</div>}>
+        <Footer />
+      </Suspense>
     </>
   );
 }
